@@ -199,8 +199,38 @@
     window.EJS_color         = '#8bac0f';
     window.EJS_pathtodata    = BASE;
 
+    /* El emulador guarda la partida cada 5 minutos por defecto. Para un
+       llavero eso es demasiado: la gente juega un rato corto y cierra.
+       Lo bajamos a 30 segundos. */
+    window.EJS_defaultOptions = { 'save-save-interval': '30' };
+
+    protegerPartida();
+
     var s = document.createElement('script');
     s.src = BASE + 'loader.js';
     document.body.appendChild(s);
+  }
+
+  /* Guardar la partida al salir.
+
+     El emulador se apoya en 'beforeunload', que en iPhone NO se dispara:
+     Safari no lo ejecuta al cerrar la pestaña ni al cambiar de app. Por
+     eso la partida se perdía en iOS aunque el jugador hubiera guardado.
+
+     'visibilitychange' sí es confiable en iOS y salta apenas la pantalla
+     deja de verse, que es justo el momento de escribir. */
+  function protegerPartida() {
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') guardarPartida();
+    });
+    window.addEventListener('pagehide', guardarPartida);
+    window.addEventListener('blur', guardarPartida);
+  }
+
+  function guardarPartida() {
+    try {
+      var em = window.EJS_emulator;
+      if (em && em.started && em.gameManager) em.gameManager.saveSaveFiles();
+    } catch (e) { /* si el emulador todavía no arrancó, no hay nada que guardar */ }
   }
 })();
