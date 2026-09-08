@@ -1,0 +1,76 @@
+:root{
+  --verde-osc:#0f380f;
+  --verde-med:#306230;
+  --verde-cla:#8bac0f;
+  --pantalla:#9bbc0f;
+  --gris:#c4c4c4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--verde-osc);
+  color:var(--pantalla);
+  font-family:"Trebuchet MS",system-ui,sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+#portada{text-align:center;padding:24px;max-width:420px}
+#portada.oculto{display:none}
+
+.cartucho{
+  width:120px;height:140px;margin:0 auto 24px;
+  background:var(--gris);border-radius:6px 6px 10px 10px;
+  position:relative;box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.cartucho::before{
+  content:"";position:absolute;top:14px;left:14px;right:14px;height:56px;
+  background:#e8e8e8;border-radius:3px;
+}
+.cartucho::after{
+  content:"";position:absolute;bottom:0;left:22px;right:22px;height:16px;
+  background:var(--verde-osc);border-radius:2px 2px 0 0;
+}
+
+h1{font-size:22px;letter-spacing:.5px;margin-bottom:6px;color:var(--pantalla)}
+.sub{font-size:14px;color:var(--verde-cla);margin-bottom:28px;line-height:1.5}
+
+.boton{
+  display:block;width:100%;padding:16px 24px;
+  background:var(--pantalla);color:var(--verde-osc);
+  border:none;border-radius:8px;
+  font-size:17px;font-weight:bold;font-family:inherit;
+  cursor:pointer;text-decoration:none;
+}
+.boton:active{background:var(--verde-cla)}
+.pie{margin-top:24px;font-size:11px;color:var(--verde-med);letter-spacing:1px}
+
+#contenedor{display:none;width:100%;height:100%}
+#contenedor.activo{display:block}
+#game{width:100%;height:100%}
+
+/* catálogo */
+.lista{list-style:none;text-align:left;margin-top:8px}
+.lista li{margin-bottom:10px}
+.lista a{
+  display:block;padding:14px 16px;border:1px solid var(--verde-med);
+  border-radius:8px;color:var(--pantalla);text-decoration:none;font-size:16px;
+}
+
+/* barra de descarga */
+.barra{
+  margin-top:14px;height:8px;border-radius:4px;
+  background:var(--verde-med);overflow:hidden;
+}
+.barra i{
+  display:block;height:100%;width:0;
+  background:var(--pantalla);transition:width .15s linear;
+}
+.boton[disabled]{opacity:.55}
+
+.aviso{
+  margin-top:16px;padding:12px;border-radius:8px;
+  border:1px solid var(--verde-med);
+  font-size:13px;line-height:1.5;color:var(--verde-cla);
+}
+.aviso b{color:var(--pantalla)}

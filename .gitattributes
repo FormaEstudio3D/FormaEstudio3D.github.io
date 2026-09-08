@@ -1,0 +1,5 @@
+*.gba binary
+*.gb  binary
+*.gbc binary
+*.data binary
+*.wasm binary

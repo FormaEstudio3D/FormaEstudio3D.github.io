@@ -1,0 +1,13 @@
+{
+  "name": "Pokémon Rubí",
+  "short_name": "Pokémon Rubí",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f380f",
+  "theme_color": "#0f380f",
+  "icons": [
+    { "src": "/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

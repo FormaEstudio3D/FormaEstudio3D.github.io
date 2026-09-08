@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0f380f">
+<title>Pokémon Zafiro</title>
+<link rel="stylesheet" href="/estilo.css">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="/icono-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Pokémon Zafiro">
+</head>
+<body>
+<script>
+  /* ---- Lo único que cambia de un cartucho a otro ---- */
+  window.JUEGO = {
+    titulo: 'Pokémon Zafiro',
+    rom:    '/roms/zafiro.gba',
+    core:   'gba'
+  };
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
