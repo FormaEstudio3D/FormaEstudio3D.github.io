@@ -33,7 +33,7 @@ abre sin internet.
          titulo: 'Nombre del juego',
          rom:    '/roms/archivo.gba',
          core:   'gba',              // gb | gba | nes | snes
-         portada: '/portadas/slug.jpg'   // opcional
+         portada: '/portadas/slug.png'   // opcional
        };
 
    La carátula es opcional: si el archivo no está, la pantalla usa el

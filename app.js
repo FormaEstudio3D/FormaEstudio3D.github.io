@@ -78,7 +78,8 @@
     var img = new Image();
     img.onload = function () {
       pantalla.classList.add('con-arte');
-      arte.style.backgroundImage = 'url("' + portada + '")';
+      /* La usa dos veces el CSS: el cartucho nítido y el fondo borroso. */
+      pantalla.style.setProperty('--arte', 'url("' + portada + '")');
     };
     img.src = portada;
   }

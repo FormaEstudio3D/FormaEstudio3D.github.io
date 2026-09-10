@@ -19,35 +19,40 @@ body{
 #portada{
   position:fixed;inset:0;
   display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-end;
+  align-items:center;justify-content:center;
   text-align:center;padding:28px 24px 20px;
   cursor:pointer;
   user-select:none;-webkit-user-select:none;
 }
 #portada.oculto{display:none}
 
-/* La carátula, cuando el cartucho tiene una */
-.arte{
-  position:absolute;inset:0;
+/* Fondo: la misma foto del cartucho, ampliada y desenfocada.
+   Da ambiente y disimula que la imagen original es chica. */
+#portada.con-arte::before{
+  content:"";position:absolute;inset:-60px;
+  background-image:var(--arte);
   background-size:cover;background-position:center;
+  filter:blur(34px) brightness(.4) saturate(1.3);
   z-index:0;
 }
-/* Degradado para que el texto se lea sobre cualquier imagen */
-#portada.con-arte .arte::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(to bottom,
-    rgba(15,56,15,.25) 0%,
-    rgba(15,56,15,.55) 45%,
-    rgba(15,56,15,.95) 100%);
+
+/* El cartucho: la foto real, nítida y en su proporción */
+.arte{
+  position:relative;z-index:1;
+  width:min(86vw,380px);
+  aspect-ratio:300/177;
+  background-image:var(--arte);
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  filter:drop-shadow(0 14px 28px rgba(0,0,0,.65));
+  margin-bottom:26px;
 }
 
-/* Sin carátula: el cartucho dibujado de siempre */
-#portada:not(.con-arte){justify-content:center}
+/* Sin foto: el cartucho dibujado de siempre */
 #portada:not(.con-arte) .arte{
-  position:relative;inset:auto;
-  width:120px;height:140px;margin:0 auto 24px;
+  width:120px;height:140px;aspect-ratio:auto;
   background:var(--gris);border-radius:6px 6px 10px 10px;
-  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  box-shadow:0 8px 24px rgba(0,0,0,.5);filter:none;
+  margin-bottom:24px;
 }
 #portada:not(.con-arte) .arte::before{
   content:"";position:absolute;top:14px;left:14px;right:14px;height:56px;
@@ -61,16 +66,15 @@ body{
 .info{position:relative;z-index:1;width:100%;max-width:420px}
 
 h1{
-  font-size:26px;letter-spacing:.5px;margin-bottom:8px;
-  color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.8);
+  font-size:22px;letter-spacing:.5px;margin-bottom:6px;
+  color:var(--pantalla);
 }
-#portada:not(.con-arte) h1{font-size:22px;color:var(--pantalla);text-shadow:none}
+#portada.con-arte h1{color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.9)}
 
 .sub{
   font-size:14px;color:var(--verde-cla);margin-bottom:22px;line-height:1.5;
-  text-shadow:0 1px 8px rgba(0,0,0,.8);
 }
-#portada:not(.con-arte) .sub{text-shadow:none}
+#portada.con-arte .sub{text-shadow:0 1px 10px rgba(0,0,0,.9)}
 
 .boton{
   display:block;width:100%;padding:16px 24px;
@@ -94,7 +98,7 @@ h1{
 
 .aviso{
   margin-top:16px;padding:12px;border-radius:10px;
-  background:rgba(15,56,15,.75);
+  background:rgba(15,56,15,.8);
   border:1px solid var(--verde-med);
   font-size:13px;line-height:1.5;color:var(--verde-cla);
 }
@@ -105,7 +109,7 @@ h1{
   margin-top:22px;font-size:11px;letter-spacing:1px;
   color:var(--verde-med);
 }
-#portada.con-arte .pie{color:rgba(155,188,15,.65)}
+#portada.con-arte .pie{color:rgba(155,188,15,.7)}
 
 /* ============ emulador ============ */
 #contenedor{display:none;width:100%;height:100%}
