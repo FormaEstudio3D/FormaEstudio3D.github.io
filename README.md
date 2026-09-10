@@ -52,3 +52,9 @@ abre sin internet.
   los clientes pierden lo guardado y vuelven a bajar el juego entero.
 - El core `-legacy-wasm.data` es el que realmente se usa en GitHub Pages.
   Sin él el juego no arranca en producción, aunque ande en tu PC.
+
+## Íconos de la pantalla de inicio
+
+`iconos/<slug>.png` es la etiqueta del cartucho recortada a cuadrado,
+generada a partir de `portadas/<slug>.png`. Cada cartucho la enlaza en
+su `<link rel="apple-touch-icon">` y en su `manifest.json`.

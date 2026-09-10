@@ -41,6 +41,10 @@
   ];
   if (portada) ESENCIALES.push(portada);
 
+  /* El ícono de la pantalla de inicio, para que también quede offline. */
+  var enlaceIcono = document.querySelector('link[rel="apple-touch-icon"]');
+  if (enlaceIcono) ESENCIALES.push(enlaceIcono.getAttribute('href'));
+
   document.title = titulo + ' — Forma Estudio 3D';
 
   /* ---------------- pantalla ---------------- */
