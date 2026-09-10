@@ -86,8 +86,14 @@ self.addEventListener('fetch', function (e) {
       if (resp && resp.ok) {
         var copia = resp.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copia); });
+        return resp;
       }
-      return resp;
+      /* El servidor contestó, pero con un error (un 404 si algún día el
+         sitio dejara de existir, un 500, lo que sea). Eso NO es una
+         respuesta válida para mostrar: si tenemos el juego guardado en
+         el teléfono, vale infinitamente más que la página de error.
+         Sin esto, alguien con el juego ya descargado vería un 404. */
+      return caches.match(req).then(function (hit) { return hit || resp; });
     }).catch(function () {
       return caches.match(req).then(function (hit) {
         /* Sin red y sin copia guardada: hay que devolver un error de
