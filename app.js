@@ -46,7 +46,8 @@
   /* ---------------- pantalla ---------------- */
   document.body.innerHTML =
     '<div id="portada">' +
-      '<div class="arte"></div>' +
+      '<img class="foto" alt="" hidden>' +
+      '<div class="cartucho"></div>' +
       '<div class="info">' +
         '<h1></h1>' +
         '<p class="sub"></p>' +
@@ -60,7 +61,8 @@
     '<div id="contenedor"><div id="game"></div></div>';
 
   var pantalla   = document.getElementById('portada');
-  var arte       = pantalla.querySelector('.arte');
+  var foto       = pantalla.querySelector('.foto');
+  var cartucho   = pantalla.querySelector('.cartucho');
   var contenedor = document.getElementById('contenedor');
   var btn        = document.getElementById('btn');
   var barra      = document.getElementById('barra');
@@ -71,17 +73,87 @@
 
   pantalla.querySelector('h1').textContent = titulo;
 
-  /* La carátula se aplica SOLO si la imagen carga de verdad. Si el
-     archivo no está o falla, la pantalla se queda con el cartucho
-     dibujado de siempre en vez de un fondo pelado. */
+  /* La foto se aplica SOLO si la imagen carga de verdad. Si el archivo
+     no está o falla, queda el cartucho dibujado de siempre. */
   if (portada) {
     var img = new Image();
     img.onload = function () {
+      foto.src = portada;
+      foto.hidden = false;
+      cartucho.hidden = true;
       pantalla.classList.add('con-arte');
-      /* La usa dos veces el CSS: el cartucho nítido y el fondo borroso. */
-      pantalla.style.setProperty('--arte', 'url("' + portada + '")');
+      pintarFondo(img);
     };
     img.src = portada;
+  }
+
+  /* Tiñe el fondo con el color de la etiqueta del cartucho.
+
+     Antes esto se hacía con la misma foto ampliada y desenfocada por CSS.
+     En el iPhone el desenfoque no se aplicaba y quedaba la foto nítida y
+     gigante tapando toda la pantalla. Un color plano no puede fallar:
+     sacamos el color promedio de la imagen y lo usamos de fondo. */
+  function pintarFondo(img) {
+    try {
+      var A = 32, L = 20;
+      var c = document.createElement('canvas');
+      c.width = A; c.height = L;
+      var ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, A, L);
+      var d = ctx.getImageData(0, 0, A, L).data;
+
+      /* Promediar TODA la imagen daba marrón: el plástico gris del
+         cartucho es casi todo el cuadro y se comía el color. Miramos
+         solo los píxeles con color de verdad (los de la etiqueta) y
+         descartamos los grises. */
+      var r = 0, g = 0, b = 0, n = 0;
+      for (var i = 0; i < d.length; i += 4) {
+        var max = Math.max(d[i], d[i+1], d[i+2]);
+        var min = Math.min(d[i], d[i+1], d[i+2]);
+        if (max - min < 45) continue;           // gris: no aporta color
+        if (max < 40) continue;                 // casi negro
+        r += d[i]; g += d[i+1]; b += d[i+2]; n++;
+      }
+      if (!n) { r = d[0]; g = d[1]; b = d[2]; n = 1; }
+
+      var hsl = aHSL(r / n, g / n, b / n);
+      hsl[1] = Math.max(hsl[1], 0.50);          // que se note de qué juego es
+      hsl[2] = 0.13;                            // bien oscuro, para que lea el texto
+      var rgb = aRGB(hsl[0], hsl[1], hsl[2]);
+
+      document.documentElement.style.setProperty(
+        '--fondo', 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')');
+    } catch (e) { /* si el navegador no deja leer el canvas, queda el verde */ }
+  }
+
+  function aHSL(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h = 0, s = 0, l = (max + min) / 2, d = max - min;
+    if (d) {
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r)      h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+      else if (max === g) h = ((b - r) / d + 2) / 6;
+      else                h = ((r - g) / d + 4) / 6;
+    }
+    return [h, s, l];
+  }
+
+  function aRGB(h, s, l) {
+    function f(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    }
+    if (!s) { var v = Math.round(l * 255); return [v, v, v]; }
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+    return [Math.round(f(p, q, h + 1/3) * 255),
+            Math.round(f(p, q, h) * 255),
+            Math.round(f(p, q, h - 1/3) * 255)];
   }
 
   /* ---------------- arranque ---------------- */
