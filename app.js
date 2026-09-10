@@ -6,26 +6,23 @@
 (function () {
   'use strict';
 
-  var cfg    = window.JUEGO || {};
-  var titulo = cfg.titulo || 'Forma Estudio 3D';
-  var core   = cfg.core   || 'gb';
-  var rom    = cfg.rom    || null;
+  var cfg     = window.JUEGO || {};
+  var titulo  = cfg.titulo  || 'Forma Estudio 3D';
+  var core    = cfg.core    || 'gb';
+  var rom     = cfg.rom     || null;
+  var portada = cfg.portada || null;      // carátula del juego (opcional)
 
-  var CACHE  = 'formaestudio3d';   // mismo nombre que en sw.js, sin versión
-  var BASE   = '/emulador/';
+  var CACHE = 'formaestudio3d';   // mismo nombre que en sw.js, sin versión
+  var BASE  = '/emulador/';
 
-  /* Qué archivo de core necesita cada consola */
-  var CORES = { gb: 'gambatte-wasm', gbc: 'gambatte-wasm', gba: 'mgba-wasm' };
-
+  var CORES  = { gb: 'gambatte-wasm', gbc: 'gambatte-wasm', gba: 'mgba-wasm' };
   var NUCLEO = CORES[core] || 'gambatte-wasm';
   var MOTOR  = NUCLEO.replace('-wasm', '');
 
   var ESENCIALES = [
     /* La propia página del cartucho va PRIMERA y es imprescindible.
        El service worker se registra recién durante esta visita, así que
-       no llega a interceptar (ni guardar) la carga que lo instaló.
-       Si no la guardamos a mano acá, el cliente guarda los 16 MB del
-       juego pero al abrirlo sin señal le aparece "Sin conexión". */
+       no llega a interceptar (ni guardar) la carga que lo instaló. */
     location.pathname,
     'manifest.json',
     '/app.js',
@@ -42,33 +39,49 @@
        en esta versión. Si falta, el juego no arranca. */
     BASE + 'cores/' + MOTOR + '-legacy-wasm.data'
   ];
+  if (portada) ESENCIALES.push(portada);
 
   document.title = titulo + ' — Forma Estudio 3D';
 
   /* ---------------- pantalla ---------------- */
   document.body.innerHTML =
     '<div id="portada">' +
-      '<div class="cartucho"></div>' +
-      '<h1></h1>' +
-      '<p class="sub"></p>' +
-      '<button class="boton" id="btn" disabled></button>' +
-      '<div class="barra" id="barra" hidden><i></i></div>' +
-      '<p class="aviso" id="aviso" hidden></p>' +
-      '<input type="file" id="archivo" accept=".gb,.gbc,.gba,.nes,.smc,.sfc,.zip" hidden>' +
+      '<div class="arte"></div>' +
+      '<div class="info">' +
+        '<h1></h1>' +
+        '<p class="sub"></p>' +
+        '<button class="boton" id="btn"></button>' +
+        '<div class="barra" id="barra" hidden><i></i></div>' +
+        '<p class="aviso" id="aviso" hidden></p>' +
+      '</div>' +
       '<p class="pie">FORMA ESTUDIO 3D</p>' +
+      '<input type="file" id="archivo" accept=".gb,.gbc,.gba,.nes,.smc,.sfc,.zip" hidden>' +
     '</div>' +
     '<div id="contenedor"><div id="game"></div></div>';
 
-  var portada    = document.getElementById('portada');
+  var pantalla   = document.getElementById('portada');
+  var arte       = pantalla.querySelector('.arte');
   var contenedor = document.getElementById('contenedor');
   var btn        = document.getElementById('btn');
   var barra      = document.getElementById('barra');
   var relleno    = barra.querySelector('i');
   var aviso      = document.getElementById('aviso');
   var archivo    = document.getElementById('archivo');
-  var sub        = document.querySelector('.sub');
+  var sub        = pantalla.querySelector('.sub');
 
-  document.querySelector('h1').textContent = titulo;
+  pantalla.querySelector('h1').textContent = titulo;
+
+  /* La carátula se aplica SOLO si la imagen carga de verdad. Si el
+     archivo no está o falla, la pantalla se queda con el cartucho
+     dibujado de siempre en vez de un fondo pelado. */
+  if (portada) {
+    var img = new Image();
+    img.onload = function () {
+      pantalla.classList.add('con-arte');
+      arte.style.backgroundImage = 'url("' + portada + '")';
+    };
+    img.src = portada;
+  }
 
   /* ---------------- arranque ---------------- */
   if ('serviceWorker' in navigator) {
@@ -79,7 +92,6 @@
     /* Cartucho sin juego fijo: el usuario carga el suyo */
     sub.textContent = 'Elegí el archivo del juego que tengas en tu teléfono.';
     btn.textContent = 'ELEGIR JUEGO';
-    btn.disabled = false;
     btn.onclick = function () { archivo.click(); };
     archivo.onchange = function () {
       if (archivo.files.length) arrancar(URL.createObjectURL(archivo.files[0]));
@@ -87,24 +99,67 @@
     return;
   }
 
+  var listo     = false;   // ya está todo guardado
+  var esperando = false;   // el usuario tocó mientras todavía descargaba
+  var descarga  = null;    // promesa de la descarga en curso
+
   preparar();
 
   function preparar() {
-    sub.textContent = 'Un momento…';
-    yaGuardado().then(function (listo) {
-      if (listo) {
-        sub.textContent = 'Listo para jugar, con o sin internet.';
-        btn.textContent = 'JUGAR';
-        btn.disabled = false;
-        btn.onclick = function () { arrancar(rom); };
+    /* Toda la pantalla es tocable, no solo el botón. */
+    pantalla.onclick = alTocar;
+
+    yaGuardado().then(function (guardado) {
+      if (guardado) {
+        listo = true;
+        sub.textContent = 'Con o sin internet.';
+        btn.textContent = 'TOCÁ PARA JUGAR';
         sugerirInstalar();
-      } else {
-        sub.textContent = 'La primera vez se guarda el juego en tu teléfono. Después abre solo, sin internet.';
-        btn.textContent = 'GUARDAR Y JUGAR';
-        btn.disabled = false;
-        btn.onclick = guardarYJugar;
+        return;
       }
+
+      /* Todavía no está guardado: EMPEZAMOS A BAJARLO YA, sin esperar
+         que el usuario toque nada. Para cuando toque, en general ya está
+         listo y el juego entra al instante. Antes el toque disparaba la
+         descarga y había que quedarse mirando la barra de progreso. */
+      sub.textContent = 'Preparando el juego…';
+      btn.textContent = 'TOCÁ PARA JUGAR';
+      barra.hidden = false;
+      bajarTodo();
     });
+  }
+
+  function bajarTodo() {
+    if (descarga) return descarga;
+    descarga = caches.open(CACHE)
+      .then(function (c) {
+        return c.addAll(ESENCIALES)
+                .catch(function () { /* si falla alguno, seguimos */ })
+                .then(function () { return bajarRom(c); });
+      })
+      .then(function () {
+        listo = true;
+        progreso(1);
+        barra.hidden = true;
+        sub.textContent = 'Con o sin internet.';
+        sugerirInstalar();
+        if (esperando) arrancar(rom);   // tocó antes de tiempo: arrancamos ahora
+      })
+      .catch(function () {
+        descarga  = null;
+        esperando = false;
+        barra.hidden = true;
+        btn.textContent = 'REINTENTAR';
+        sub.textContent = 'No se pudo descargar el juego. Revisá la conexión.';
+      });
+    return descarga;
+  }
+
+  function alTocar() {
+    if (listo) { arrancar(rom); return; }
+    esperando = true;
+    btn.textContent = 'PREPARANDO…';
+    bajarTodo();
   }
 
   function yaGuardado() {
@@ -115,38 +170,12 @@
   }
 
   /* ---------------- descarga ---------------- */
-  function guardarYJugar() {
-    btn.disabled = true;
-    btn.textContent = 'GUARDANDO…';
-    barra.hidden = false;
-    progreso(0);
-
-    caches.open(CACHE)
-      .then(function (c) {
-        return c.addAll(ESENCIALES).catch(function () { /* si falla alguno, seguimos */ })
-                .then(function () { return c; });
-      })
-      .then(function (c) { return bajarRom(c); })
-      .then(function () {
-        progreso(1);
-        sugerirInstalar();
-        arrancar(rom);
-      })
-      .catch(function (e) {
-        barra.hidden = true;
-        btn.disabled = false;
-        btn.textContent = 'REINTENTAR';
-        sub.textContent = 'No se pudo descargar el juego. Revisá la conexión.';
-        btn.onclick = guardarYJugar;
-      });
-  }
-
   function bajarRom(cache) {
     return fetch(rom).then(function (resp) {
       if (!resp.ok) throw new Error('rom');
       var total = parseInt(resp.headers.get('Content-Length') || '0', 10);
 
-      if (!resp.body || !total) {                    // navegador viejo: sin barra fina
+      if (!resp.body || !total) {          // navegador viejo: sin barra fina
         return resp.blob().then(function (b) { return guardar(cache, b); });
       }
 
@@ -182,13 +211,14 @@
                     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
     if (!iOS || instalado) return;
     aviso.hidden = false;
-    aviso.innerHTML = 'Para que el juego te quede guardado para siempre: ' +
+    aviso.innerHTML = 'Para que te quede guardado para siempre: ' +
                       'tocá <b>Compartir</b> y después <b>Agregar a inicio</b>.';
   }
 
   /* ---------------- emulador ---------------- */
   function arrancar(url) {
-    portada.classList.add('oculto');
+    pantalla.onclick = null;
+    pantalla.classList.add('oculto');
     contenedor.classList.add('activo');
 
     window.EJS_player        = '#game';

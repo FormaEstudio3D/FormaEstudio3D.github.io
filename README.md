@@ -19,6 +19,7 @@ abre sin internet.
     icono-512.png       ícono para la pantalla de inicio
     emulador/           EmulatorJS (propio, no depende de ningún CDN)
     roms/               los juegos
+    portadas/           las carátulas (opcionales)
     gba/<slug>/         un cartucho
     gbc/<slug>/         un cartucho
 
@@ -31,8 +32,12 @@ abre sin internet.
        window.JUEGO = {
          titulo: 'Nombre del juego',
          rom:    '/roms/archivo.gba',
-         core:   'gba'          // gb | gba | nes | snes
+         core:   'gba',              // gb | gba | nes | snes
+         portada: '/portadas/slug.jpg'   // opcional
        };
+
+   La carátula es opcional: si el archivo no está, la pantalla usa el
+   cartucho dibujado y no se rompe nada.
 
 4. En `manifest.json` de esa carpeta, cambiar `name` y `short_name`
 5. Agregarlo al índice de la consola

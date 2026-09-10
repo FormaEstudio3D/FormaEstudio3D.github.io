@@ -1,0 +1,11 @@
+Acá van las carátulas de cada juego, con el nombre del slug:
+
+    rojo-fuego.jpg
+    verde-hoja.jpg
+    esmeralda.jpg
+    rubi.jpg
+    zafiro.jpg
+
+Verticales, tipo caja del juego. Con 600x900 alcanza y sobra.
+
+Si una falta, la pantalla usa el cartucho dibujado y no se rompe nada.
