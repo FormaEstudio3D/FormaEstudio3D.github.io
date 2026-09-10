@@ -5,9 +5,14 @@
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f380f",
-  "theme_color": "#0f380f",
+  "background_color": "#101e31",
+  "theme_color": "#101e31",
   "icons": [
-    { "src": "/iconos/zafiro.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/iconos/zafiro.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

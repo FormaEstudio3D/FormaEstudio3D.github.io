@@ -5,9 +5,14 @@
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f380f",
-  "theme_color": "#0f380f",
+  "background_color": "#103127",
+  "theme_color": "#103127",
   "icons": [
-    { "src": "/iconos/esmeralda.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/iconos/esmeralda.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

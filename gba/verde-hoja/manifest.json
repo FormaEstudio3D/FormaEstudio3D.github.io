@@ -5,9 +5,14 @@
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f380f",
-  "theme_color": "#0f380f",
+  "background_color": "#1b3110",
+  "theme_color": "#1b3110",
   "icons": [
-    { "src": "/iconos/verde-hoja.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/iconos/verde-hoja.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#0f380f">
+<meta name="theme-color" content="#311910">
 <title>Pokémon Rojo Fuego</title>
 <link rel="stylesheet" href="/estilo.css">
 <link rel="manifest" href="manifest.json">
@@ -11,14 +11,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Pokémon Rojo Fuego">
+<style>
+  /* El color va acá y no lo calcula el JS: así la pantalla nace del
+     color correcto en vez de empezar verde y saltar. */
+  :root{--fondo:#311910}
+</style>
 </head>
 <body>
 <script>
   /* ---- Lo único que cambia de un cartucho a otro ---- */
   window.JUEGO = {
-    titulo: 'Pokémon Rojo Fuego',
-    rom:    '/roms/rojo-fuego.gba',
-    core:   'gba',
+    titulo:  'Pokémon Rojo Fuego',
+    rom:     '/roms/rojo-fuego.gba',
+    core:    'gba',
     portada: '/portadas/rojo-fuego.png'
   };
 </script>

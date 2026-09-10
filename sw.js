@@ -80,9 +80,17 @@ self.addEventListener('fetch', function (e) {
     return;
   }
 
-  /* Red primero, cache de respaldo */
+  /* Red primero, cache de respaldo.
+
+     Ojo con el 'no-cache': GitHub Pages manda los archivos con la orden
+     de guardarlos 10 minutos. Sin esto, el navegador contesta desde SU
+     propio cache sin preguntar y una corrección recién publicada tarda
+     en llegar. Peor todavía en iPhone: al agregar a la pantalla de
+     inicio, Safari leía el HTML viejo y se quedaba con el ícono viejo.
+     Con 'no-cache' siempre le pregunta al servidor si cambió; si no
+     cambió, la respuesta es mínima y no se baja nada de nuevo. */
   e.respondWith(
-    fetch(req).then(function (resp) {
+    fetch(url.href, { cache: 'no-cache', credentials: 'same-origin' }).then(function (resp) {
       if (resp && resp.ok) {
         var copia = resp.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copia); });
