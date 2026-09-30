@@ -58,3 +58,9 @@ abre sin internet.
 `iconos/<slug>.png` es la etiqueta del cartucho recortada a cuadrado,
 generada a partir de `portadas/<slug>.png`. Cada cartucho la enlaza en
 su `<link rel="apple-touch-icon">` y en su `manifest.json`.
+
+## Juegos de Game Boy / Game Boy Color
+
+Usar `core: 'gba'` también para estos. Así corren con mGBA, el mismo motor
+que los GBA. Con `core: 'gb'` usaban gambatte, y Pokémon Amarillo se
+trababa y se reiniciaba en el iPhone (la ROM estaba intacta).

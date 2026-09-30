@@ -23,7 +23,11 @@
   window.JUEGO = {
     titulo: 'Pokémon Amarillo',
     rom:    '/roms/amarillo.gbc',
-    core:   'gb',
+    /* 'gba' a propósito, aunque sea de Game Boy Color: así usa mGBA, el
+       mismo motor que los GBA, que en el iPhone anda bien. Con 'gb'
+       usaba gambatte y en iPhone se trababa y se reiniciaba. mGBA
+       también corre juegos de GB y GBC. */
+    core:    'gba',
     portada: '/portadas/amarillo.png'
   };
 </script>
