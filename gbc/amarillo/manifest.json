@@ -1,0 +1,13 @@
+{
+  "name": "Pokémon Amarillo",
+  "short_name": "Pokémon Amarillo",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#312c10",
+  "theme_color": "#312c10",
+  "icons": [
+    { "src": "/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
