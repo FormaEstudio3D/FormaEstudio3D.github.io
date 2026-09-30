@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#312c10">
+<meta name="theme-color" content="#312a10">
 <title>Pokémon Amarillo</title>
 <link rel="stylesheet" href="/estilo.css">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="/icono-512.png">
+<link rel="apple-touch-icon" href="/iconos/amarillo.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Pokémon Amarillo">
 <style>
   /* El color va acá y no lo calcula el JS: así la pantalla nace del
      color correcto en vez de empezar verde y saltar. */
-  :root{--fondo:#312c10}
+  :root{--fondo:#312a10}
 </style>
 </head>
 <body>
@@ -23,7 +23,8 @@
   window.JUEGO = {
     titulo: 'Pokémon Amarillo',
     rom:    '/roms/amarillo.gbc',
-    core:   'gb'
+    core:   'gb',
+    portada: '/portadas/amarillo.png'
   };
 </script>
 <script src="/app.js"></script>
